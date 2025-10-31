@@ -2,6 +2,7 @@ import os
 import json
 import re
 import markdown
+import locale
 from bs4 import BeautifulSoup
 from collections import OrderedDict
 
@@ -116,17 +117,17 @@ if __name__ == "__main__":
             else:
                 continue
 
-    def sort_nested_dict(d, max_depth: int = None):
+    def sort_nested_dict(d, max_depth: int = None, key=None):
         if max_depth == 0:
             return d
         if isinstance(d, dict):
             sorted_outer = OrderedDict()
             next_depth = None if max_depth is None else max_depth - 1
-            for k in sorted(d.keys()):
+            for k in sorted(d.keys(), key=key):
                 if next_depth == 0:
                     sorted_outer[k] = d[k]
                 else:
-                    sorted_outer[k] = sort_nested_dict(d[k], next_depth)
+                    sorted_outer[k] = sort_nested_dict(d[k], next_depth, key=locale.strxfrm)
             return sorted_outer
         return d
 
