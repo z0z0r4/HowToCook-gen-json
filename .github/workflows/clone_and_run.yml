@@ -25,6 +25,7 @@ jobs:
                   pip install markdown beautifulsoup4
 
                   cp main.py upstream/
+                  cp ignore.json upstream/
                   cd upstream
 
                   python main.py
