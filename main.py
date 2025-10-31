@@ -3,6 +3,7 @@ import json
 import re
 import markdown
 from bs4 import BeautifulSoup
+from collections import OrderedDict
 
 def generate_recipe(md_path):
     with open(md_path, 'r', encoding='utf-8') as f:
@@ -115,10 +116,21 @@ if __name__ == "__main__":
             else:
                 continue
 
+    def sort_nested_dict(d):
+        if isinstance(d, dict):
+            sorted_outer = OrderedDict()
+            for k in sorted(d.keys()):
+                sorted_outer[k] = sort_nested_dict(d[k])
+            return sorted_outer
+        return d
+
+    sorted_result = sort_nested_dict(result)
+    sorted_filtered_result = sort_nested_dict(filtered_result)
+
     with open('recipes.json', 'w', encoding='utf-8') as f:
-        json.dump(result, f, ensure_ascii=False, indent=4)
+        json.dump(sorted_result, f, ensure_ascii=False, indent=4)
     print("菜谱 JSON 文件生成完毕，保存在 recipes.json")
 
     with open('filtered_recipes.json', 'w', encoding='utf-8') as f:
-        json.dump(filtered_result, f, ensure_ascii=False, indent=4)
+        json.dump(sorted_filtered_result, f, ensure_ascii=False, indent=4)
     print("过滤后的菜谱 JSON 文件生成完毕，保存在 filtered_recipes.json")
