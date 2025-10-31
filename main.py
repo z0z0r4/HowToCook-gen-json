@@ -84,22 +84,41 @@ def generate_recipe(md_path):
         return result
 
 if __name__ == "__main__":
+    print("开始生成菜谱 JSON 文件...")
+
+    # 提取 ignore 菜单
+    with open('ignore.json', 'r', encoding='utf-8') as f:
+        ignore_dish_list = json.load(f)
+    print(f"忽略以下菜谱：{ignore_dish_list}")
+
     result = {}
-    for category in categories:
-        result[category] = {}
-        dishes = os.listdir(os.path.join('dishes', category))
-        for dish in dishes:
-            if not (os.path.isdir(os.path.join('dishes', category, dish))) and dish.endswith('.md'):
-                recipe = generate_recipe(os.path.join('dishes', category, dish))
-                result[category][dish.replace('.md', '')] = recipe
-            elif os.path.isdir(os.path.join('dishes', category, dish)):
-                sub_dishes = os.listdir(os.path.join('dishes', category, dish))
+    filtered_result = {}
+    for category_name in categories:
+        result[category_name] = {}
+        dishes = os.listdir(os.path.join('dishes', category_name))
+        for dish_name in dishes:
+
+            if not (os.path.isdir(os.path.join('dishes', category_name, dish_name))) and dish_name.endswith('.md'):
+                recipe = generate_recipe(os.path.join('dishes', category_name, dish_name))
+                result[category_name][dish_name.replace('.md', '')] = recipe
+                if dish_name not in ignore_dish_list:
+                    filtered_result[category_name][dish_name.replace('.md', '')] = recipe
+
+            elif os.path.isdir(os.path.join('dishes', category_name, dish_name)):
+                sub_dishes = os.listdir(os.path.join('dishes', category_name, dish_name))
                 for sub_dish in sub_dishes:
                     if sub_dish.endswith('.md'):
-                        recipe = generate_recipe(os.path.join('dishes', category, dish, sub_dish))
-                        result[category][sub_dish.replace('.md', '')] = recipe
+                        recipe = generate_recipe(os.path.join('dishes', category_name, dish_name, sub_dish))
+                        result[category_name][sub_dish.replace('.md', '')] = recipe
+                        if dish_name not in ignore_dish_list:
+                            filtered_result[category_name][dish_name.replace('.md', '')] = recipe
             else:
                 continue
 
     with open('recipes.json', 'w', encoding='utf-8') as f:
         json.dump(result, f, ensure_ascii=False, indent=4)
+    print("菜谱 JSON 文件生成完毕，保存在 recipes.json")
+
+    with open('filtered_recipes.json', 'w', encoding='utf-8') as f:
+        json.dump(filtered_result, f, ensure_ascii=False, indent=4)
+    print("过滤后的菜谱 JSON 文件生成完毕，保存在 filtered_recipes.json")
