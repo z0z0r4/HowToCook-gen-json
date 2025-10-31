@@ -31,7 +31,7 @@ jobs:
 
                   cd ..
 
-                  mv upstream/upstream_recipes.json recipes.json
+                  mv upstream/recipes.json recipes.json
 
                   rm -rf upstream
 
