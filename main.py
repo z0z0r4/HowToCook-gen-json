@@ -4,8 +4,6 @@ import re
 import markdown
 from bs4 import BeautifulSoup
 
-categories = os.listdir('dishes')
-
 def generate_recipe(md_path):
     with open(md_path, 'r', encoding='utf-8') as f:
         content = f.read()
@@ -93,8 +91,10 @@ if __name__ == "__main__":
 
     result = {}
     filtered_result = {}
+    categories = os.listdir('dishes')
     for category_name in categories:
         result[category_name] = {}
+        filtered_result[category_name] = {}
         dishes = os.listdir(os.path.join('dishes', category_name))
         for dish_name in dishes:
 
