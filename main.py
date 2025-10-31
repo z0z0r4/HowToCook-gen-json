@@ -116,16 +116,22 @@ if __name__ == "__main__":
             else:
                 continue
 
-    def sort_nested_dict(d):
+    def sort_nested_dict(d, max_depth: int = None):
+        if max_depth == 0:
+            return d
         if isinstance(d, dict):
             sorted_outer = OrderedDict()
+            next_depth = None if max_depth is None else max_depth - 1
             for k in sorted(d.keys()):
-                sorted_outer[k] = sort_nested_dict(d[k])
+                if next_depth == 0:
+                    sorted_outer[k] = d[k]
+                else:
+                    sorted_outer[k] = sort_nested_dict(d[k], next_depth)
             return sorted_outer
         return d
 
-    sorted_result = sort_nested_dict(result)
-    sorted_filtered_result = sort_nested_dict(filtered_result)
+    sorted_result = sort_nested_dict(result, 2)
+    sorted_filtered_result = sort_nested_dict(filtered_result, 2)
 
     with open('recipes.json', 'w', encoding='utf-8') as f:
         json.dump(sorted_result, f, ensure_ascii=False, indent=4)
