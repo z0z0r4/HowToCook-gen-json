@@ -61,3 +61,8 @@ jobs:
                   body: |
                       This PR updates the generated recipe files (`recipes.json` and `filtered_recipes.json`) produced by CI from upstream HowToCook.
                   base: main
+
+            - name: Enable Pull Request Automerge
+              run: gh pr merge --merge --auto "1"
+              env:
+                GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
