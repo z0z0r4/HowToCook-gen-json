@@ -63,6 +63,7 @@ jobs:
                   base: main
 
             - name: Enable Pull Request Automerge
-              run: gh pr merge --merge --auto "1"
+              if: steps.prepare.outputs.no-changes == 'false'
+              run: "gh pr merge --merge --auto ${{ steps.create_pr.outputs.pull-request-number }}"
               env:
                 GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
